@@ -13,7 +13,7 @@ venv/
 
 # SQLite
 *.db
-*.sqlite
+#*.sqlite
 *.sqlite3
 
 # Logs
