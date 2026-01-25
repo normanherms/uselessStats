@@ -1,0 +1,40 @@
+{
+  "fahrzeuge": [
+    {
+      "id": 1,
+      "Hersteller": "Peugeot",
+      "Kilometerstand": 26453,
+      "Baujahr": 2021,
+      "letzter_service": 2025,
+      "letzte_fahrten": [
+        "24.01.2026",
+        "23.01.2026",
+        "22.01.2026"
+      ]
+    },
+    {
+      "id": 2,
+      "Hersteller": "Mercedes",
+      "Kilometerstand": 43523,
+      "Baujahr": 2019,
+      "letzter_service": 2024,
+      "letzte_fahrten": [
+        "24.01.2026",
+        "21.01.2026",
+        "20.01.2026"
+      ]
+    },
+    {
+      "id": 3,
+      "Hersteller": "Datsun",
+      "Kilometerstand": 126453,
+      "Baujahr": 2001,
+      "letzter_service": 2007,
+      "letzte_fahrten": [
+        "24.01.2026",
+        "21.01.2026",
+        "20.01.2026"
+      ]
+    }
+  ]
+}
