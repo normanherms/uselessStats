@@ -14,7 +14,8 @@ Der erste init commit war am 25.01.2026
 
 ## Struktur des Repo's
 
-[README.md](/README.md)         # Dieses Dokument           
+[README.md](/README.md)                   # Dieses Dokument
+[requirements.txt](/requirements.txt)     # Voraussetzungen zum Ausführen des Codes
 
 ## Zweck des Projekts
 
@@ -35,6 +36,11 @@ Der Zweck ist **nicht** Selbstoptimierung, Vergleich oder Produktivität, sonder
 
 Das Projekt ist bewusst so gestaltet, dass folgende Themen praktisch gelernt werden:
 
+### systemd Handling
+
+* schreiben einer eigenen Servicedatei
+* Ausführung vor poweroff.target 
+
 ### Bash
 
 * einfache Zähler und Counter
@@ -51,8 +57,8 @@ Das Projekt ist bewusst so gestaltet, dass folgende Themen praktisch gelernt wer
 ### Datenbank
 
 * einfache Tabellen
-* Inserts und Aggregationen
-* bewusster Verzicht auf Overhead
+* Inserts und Aggregation
+* aktuell bewusster Verzicht auf Overhead
 
 ### Frontend
 
@@ -66,7 +72,7 @@ Das Projekt ist bewusst so gestaltet, dass folgende Themen praktisch gelernt wer
 * ein schlankes Container-Image
 * Auslieferung über Nginx oder ähnlichen Minimal-Webserver
 * Deployment auf K3s
-* echter, aber ungefährlicher Service
+* echter Service
 
 ---
 
@@ -76,7 +82,7 @@ Am Ende existiert:
 
 * ein Container-Image
 * das auf dem K3s-Cluster läuft
-* eine Webseite ausliefert
+* eine statische Webseite ausliefert
 * Daten aus einer eigenen API anzeigt
 
 Das Projekt dient damit als **vollständiger, nachvollziehbarer Use-Case** für Entwicklung, Deployment und Betrieb.
@@ -95,7 +101,7 @@ Das Projekt dient damit als **vollständiger, nachvollziehbarer Use-Case** für 
 
    * schnelle Ladezeiten
    * einfache Queries
-   * kein Overengineering
+   * kein bewusstes Overengineering
 
 3. **Sicherheit**
 
@@ -107,21 +113,24 @@ Das Projekt dient damit als **vollständiger, nachvollziehbarer Use-Case** für 
 
    * jedes Teil für sich verständlich
    * Fokus auf Grundlagen
-   * Lernen durch eigenes Umsetzen
+   * Lernen durch Verstehen des Codes
+   * Unterstützung von modernen Lernhilfen (ChatGPT)
+   * nicht alles selbst schreiben am Anfang aber nachhaltig Verständnis aufbauen
+   * im Verlauf das eigene weiterentwickeln lernen sowie Best Practises verstehen
 
 ---
 
 ## Architekturüberblick
 
 ```
-[systemd Service]
+[systemd oneshot Service]
     ↓ 
 [Bash Script]
     ↓ POST
 [Python API]
     ↓ SQLite
 [Aggregation & Übersetzung]
-    ↓
+    ↓ 
 [Statisches Frontend]
     ↓
 [Nginx Container]
@@ -142,6 +151,7 @@ Gespeichert werden ausschließlich einfache Events:
 
 Beispiele bzw Ideen:
 
+* Uptime
 * Tastaturanschläge
 * Bildschirmzeit
 * Mausdistanz
@@ -167,13 +177,13 @@ Die Umrechnung erfolgt **serverseitig in der API**, nicht im Frontend.
 
 ## Frontend-Zielbild
 
-Die Webseite ist bewusst ruhig, textlastig und reduziert.
+Die Webseite ist bewusst ruhig und reduziert.
 
 Beispiel:
 
 ```
 ═══════════════════════════════════════
-   USELESS STATS
+   USELESS STATS V1.0
 ═══════════════════════════════════════
 
 💻 COMPUTER USAGE
@@ -230,10 +240,17 @@ Keine Ziele, keine Balken, keine Bewertung.
 
 ---
 
+## Lokales Setup (PyCharm)
+
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+
 ## Leitmotiv
 
 > Das Projekt existiert um ein besseres Verständnis zu entwickeln wie Dinge zusammenhängen. 
 > Weitere Learnings, systemd Service Dateien, Bash Scripting, Python und Fast API, Container Builds und Helm Charts.
 > Vielleicht auch endlich das erste CI/CD Projekt.
 
-**Letzte Änderung: 25.01.2026**
+**Letzte Änderung: 26.01.2026**
