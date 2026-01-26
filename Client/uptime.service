@@ -1,0 +1,18 @@
+# Service Pfad /etc/systemd/system/uptime.service
+# Aktivieren mit:
+# sudo systemctl daemon-reload
+# sudo systemctl enable uptime.service
+# sudo systemctl start uptime.service
+# ACHTUNG PFAD ANPASSEN
+
+[Unit]
+Description=Uptime Service für Api
+Before=poweroff.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/true
+ExecStop=/home/$User/Scripte/uptimereader.sh
+
+[Install]
+WantedBy=multi-user.target

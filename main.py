@@ -100,7 +100,3 @@ def post_uptime(data: UptimeIn):
 # To-Do (v0.3)
 # - Authentifizierung hinzufügen mit Bearer Token
 # - systemd oneshot service beim Shutdown
-
-# Changelog
-# 26.01.2026 POST Funktion hinzugefügt
-# 25.01.2026 main.py mit Basic Get Funktion erstellt für / und /uptime.
