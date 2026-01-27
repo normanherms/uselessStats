@@ -3,7 +3,7 @@
 # sudo systemctl daemon-reload
 # sudo systemctl enable uptime.service
 # sudo systemctl start uptime.service
-# ACHTUNG PFAD ANPASSEN
+# !!! ACHTUNG PFAD IN DER DATEI ANPASSEN !!!
 
 [Unit]
 Description=Uptime Service für Api

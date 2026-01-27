@@ -1,5 +1,5 @@
 """
-uselessStats API v0.3
+uselessStats API v0.4
 
 Scope:
 - einfache FastAPI Anwendung
@@ -12,14 +12,13 @@ Scope:
 Bewusste Entscheidungen:
 - nicht alles an Code selbstschreiben aber verstehen
 - keine Uhrzeiten gespeichert, um Verhaltensmetriken zu vermeiden
-- keine Authentifizierung
 """
 
 from fastapi import FastAPI
 from pydantic import BaseModel
 import sqlite3
 
-Version = "v0.3"
+Version = "v0.4"
 app = FastAPI(
     title="useless stats api",
     version=Version
@@ -51,24 +50,15 @@ def get_uptime():
     cursor = conn.cursor()
 
     # Tabelle uptime
-    # id: technische ID
     # uptime_seconds: gesamte On Zeit eines Tages in Sekunden
-    # day: Datum ohne Uhrzeit um keine Nutzungsprofile zu erzeugen
+    # geholt wird die Gesamtsumme aller Uptime Einträge
 
-    cursor.execute("SELECT id, uptime_seconds, day FROM uptime")
-    rows = cursor.fetchall()
+    cursor.execute("SELECT SUM(uptime_seconds) FROM uptime")
+    result = cursor.fetchone()
 
     conn.close()
 
-    return [
-        {
-            "id": row[0],
-            "uptime_seconds": row[1],
-            "day": row[2]
-        }
-        for row in rows
-    ]
-
+    return {"uptime_seconds": result[0] or 0}
 
 class UptimeIn(BaseModel):
 
@@ -97,6 +87,35 @@ def post_uptime(data: UptimeIn):
         "message": "uptime stored"
     }
 
-# To-Do (v0.3)
-# - Authentifizierung hinzufügen mit Bearer Token
-# - systemd oneshot service beim Shutdown
+## Roadmap – uselessStats API
+#
+### v0.3 [x]
+# - FastAPI Basis
+# - SQLite Speicherung
+# - GET und POST Endpoint
+#
+### v0.4 [x]
+# - ISO Datumsformat
+# - POST addiert Uptime pro Tag
+# - GET liefert Gesamtsumme aller uptime_seconds
+#
+### v0.5 [ ]
+# - automatische DB Initialisierung
+# - sauberes Connection Handling
+#
+### v0.6 [ ]
+# - Bearer Token für GET und POST
+#
+### v0.7 [ ]
+# - definiertes Fehlerverhalten
+#
+### v0.8 [ ]
+# - Container Build
+# - persistente SQLite Daten
+#
+### v0.9 [ ]
+# - statische HTML Seite
+# - Anzeige des Gesamtsumme
+#
+### v1.0 [ ]
+# - vollständiges lauffähiges Produkt

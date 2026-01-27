@@ -14,8 +14,13 @@ Der erste init commit war am 25.01.2026
 
 ## Struktur des Repo's
 
-[README.md](/README.md)                   # Dieses Dokument
-[requirements.txt](/requirements.txt)     # Voraussetzungen zum Ausführen des Codes
+├── CHANGELOG.md
+├── Client
+│     ├── uptimereader.sh
+│     └── uptime.service
+├── main.py
+├── README.md
+└── requirements.txt
 
 ## Zweck des Projekts
 
@@ -44,7 +49,7 @@ Das Projekt ist bewusst so gestaltet, dass folgende Themen praktisch gelernt wer
 ### Bash
 
 * einfache Zähler und Counter
-* periodisches Senden von Daten
+* periodisches oder gezieltes Senden von Daten
 * grundlegende Fehlerbehandlung
 
 ### Backend (Python)
@@ -253,4 +258,4 @@ uvicorn main:app --reload
 > Weitere Learnings, systemd Service Dateien, Bash Scripting, Python und Fast API, Container Builds und Helm Charts.
 > Vielleicht auch endlich das erste CI/CD Projekt.
 
-**Letzte Änderung: 26.01.2026**
+**Letzte Änderung: 27.01.2026**
