@@ -1,5 +1,5 @@
 """
-uselessStats API v0.4
+uselessStats API v0.5
 
 Scope:
 - einfache FastAPI Anwendung
@@ -16,29 +16,61 @@ Bewusste Entscheidungen:
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
+from contextlib import contextmanager
 import sqlite3
 
-Version = "v0.4"
+# SQLite Datenbank
+# liegt bewusst im /data Verzeichnis um Code und Daten zu trennen
+# geeignet fürs Lernen und lokale Nutzung
+DB_PATH = "./data/stats.sqlite"
+
+# Datenbank Initialisierung
+# Prüfung ob Tabelle "uptime" existiert, wenn nicht, wird sie erstellt
+# Shutdown-Teil aktuell ungenutzt
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    def init_db():
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS uptime (
+                id INTEGER PRIMARY KEY,
+                day TEXT,
+                uptime_seconds INTEGER
+            )
+        """)
+        conn.commit()
+        conn.close()
+
+    # Funktionsaufruf
+    init_db()
+
+    # Ende des Startup Vorgangs
+    yield
+
+Version = "v0.5"
 app = FastAPI(
-    title="useless stats api",
-    version=Version
+    title="uselessStats api",
+    version=Version,
+    lifespan=lifespan
 )
 
-
-# SQLite Datenbank
-# Liegt bewusst im data Verzeichnis um Code und Daten zu trennen
-# Geeignet für Alpha und lokale Nutzung
-
-DB_PATH = "data/stats.sqlite"
-
-
+# Connection Handling via Context Manager
+# sorgt für automatische Öffnung und Schließung der Verbindung
+@contextmanager
 def get_db():
-    return sqlite3.connect(DB_PATH)
-
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        yield conn
+    finally:
+        if conn:
+            conn.close()
 
 @app.get("/")
 def root():
-    return {"status": "ok", "message": f"useless stats api {Version}"}
+    return {"status": "ok", "message": f"uselessStats api {Version}"}
 
 # GET /uptime
 # Gibt alle gespeicherten Uptime Einträge zurück
@@ -46,19 +78,17 @@ def root():
 
 @app.get("/uptime")
 def get_uptime():
-    conn = get_db()
-    cursor = conn.cursor()
+    with get_db() as conn:
+        cursor = conn.cursor()
 
-    # Tabelle uptime
-    # uptime_seconds: gesamte On Zeit eines Tages in Sekunden
-    # geholt wird die Gesamtsumme aller Uptime Einträge
+        # Tabelle uptime
+        # uptime_seconds: gesamte On Zeit eines Tages in Sekunden
+        # geholt wird die Gesamtsumme aller Uptime Einträge
 
-    cursor.execute("SELECT SUM(uptime_seconds) FROM uptime")
-    result = cursor.fetchone()
+        cursor.execute("SELECT SUM(uptime_seconds) FROM uptime")
+        result = cursor.fetchone()
 
-    conn.close()
-
-    return {"uptime_seconds": result[0] or 0}
+        return {"uptime_seconds": result[0] or 0}
 
 class UptimeIn(BaseModel):
 
@@ -71,21 +101,20 @@ class UptimeIn(BaseModel):
 
 @app.post("/uptime")
 def post_uptime(data: UptimeIn):
-    conn = get_db()
-    cursor = conn.cursor()
+    with get_db() as conn:
+        cursor = conn.cursor()
 
-    cursor.execute(
-        "INSERT INTO uptime (uptime_seconds, day) VALUES (?, ?)",
-        (data.uptime_seconds, data.day)
-    )
+        cursor.execute(
+            "INSERT INTO uptime (uptime_seconds, day) VALUES (?, ?)",
+            (data.uptime_seconds, data.day)
+        )
 
-    conn.commit()
-    conn.close()
+        conn.commit()
 
-    return {
-        "status": "ok",
-        "message": "uptime stored"
-    }
+        return {
+            "status": "ok",
+            "message": "uptime stored"
+        }
 
 ## Roadmap – uselessStats API
 #
@@ -99,7 +128,7 @@ def post_uptime(data: UptimeIn):
 # - POST addiert Uptime pro Tag
 # - GET liefert Gesamtsumme aller uptime_seconds
 #
-### v0.5 [ ]
+### v0.5 [x]
 # - automatische DB Initialisierung
 # - sauberes Connection Handling
 #
