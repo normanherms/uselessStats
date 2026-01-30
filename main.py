@@ -62,7 +62,7 @@ async def lifespan(app: FastAPI):
     # Ende des Startup Vorgangs
     yield
 
-Version = "v0.5"
+Version = "v0.6"
 app = FastAPI(
     title="uselessStats api",
     version=Version,
