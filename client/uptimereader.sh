@@ -10,7 +10,14 @@
 UPTIME=$(awk '{print int($1)}' /proc/uptime)
 DAY=$(date +%Y-%m-%d)
 
+# Token Variable aufgrund von leichterem Handling für die erste Version
+TOKEN=$(grep "^API_TOKEN=" useless_token.env | cut -d '=' -f2-)
+# API Request
 curl -X POST "http://127.0.0.1:8000/uptime" \
   -H "accept: application/json" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
   -d "{\"uptime_seconds\": $UPTIME, \"day\": \"$DAY\"}"
+
+# Variable direkt nach der verwendung löschen. Verwendung nur zur Laufzeit des Scripts
+unset TOKEN

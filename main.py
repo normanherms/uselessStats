@@ -1,5 +1,5 @@
 """
-uselessStats API v0.5
+uselessStats API v0.6
 
 Scope:
 - einfache FastAPI Anwendung
@@ -14,16 +14,29 @@ Bewusste Entscheidungen:
 - keine Uhrzeiten gespeichert, um Verhaltensmetriken zu vermeiden
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Header, HTTPException, Depends
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 from contextlib import contextmanager
+from dotenv import load_dotenv
+import os
 import sqlite3
+
+# Token laden aus Datei
+load_dotenv(dotenv_path="./useless_token.env")
+API_TOKEN = os.getenv("API_TOKEN")
 
 # SQLite Datenbank
 # liegt bewusst im /data Verzeichnis um Code und Daten zu trennen
 # geeignet fürs Lernen und lokale Nutzung
 DB_PATH = "./data/stats.sqlite"
+
+# Token Check Funktion im Header
+def check_token(authorization: str = Header(...)):
+    if authorization != f"Bearer {API_TOKEN}":
+        raise HTTPException(status_code=401, detail="Invalid or missing token")
+
+
 
 # Datenbank Initialisierung
 # Prüfung ob Tabelle "uptime" existiert, wenn nicht, wird sie erstellt
@@ -96,11 +109,11 @@ class UptimeIn(BaseModel):
     day: str
 
 # POST /uptime
-# schreibt Uptime Daten in die Datenbank
+# schreibt Uptime Daten in die Datenbank und vorheriger Token Prüfung
 # hartkodierter Endpoint ist erwünscht für einfachere Kontrolle
 
 @app.post("/uptime")
-def post_uptime(data: UptimeIn):
+def post_uptime(data: UptimeIn, token_check: None = Depends(check_token)):
     with get_db() as conn:
         cursor = conn.cursor()
 
@@ -132,7 +145,7 @@ def post_uptime(data: UptimeIn):
 # - automatische DB Initialisierung
 # - sauberes Connection Handling
 #
-### v0.6 [ ]
+### v0.6 [x]
 # - Bearer Token für GET und POST
 #
 ### v0.7 [ ]
@@ -148,3 +161,9 @@ def post_uptime(data: UptimeIn):
 #
 ### v1.0 [ ]
 # - vollständiges lauffähiges Produkt
+#
+### Future Ideas uselessStats API
+#
+# Glossar einbauen für z.B. IT Begriffe
+# zurückgelegte Mausmeter
+#

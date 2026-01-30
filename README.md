@@ -15,7 +15,7 @@ Der erste init commit war am 25.01.2026
 ## Struktur des Repo's
 
 ├── CHANGELOG.md
-├── Client
+├── client
 │     ├── uptimereader.sh
 │     └── uptime.service
 ├── main.py
